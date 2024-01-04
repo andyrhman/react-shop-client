@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "ES2022",
+        "module": "commonjs",
+        "allowSyntheticDefaultImports": true,
+        "paths": {
+            "src/*": ["./src/*"]
+        }
+    },
+    "include": ["src"]
+}
