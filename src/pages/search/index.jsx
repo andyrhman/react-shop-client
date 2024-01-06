@@ -103,7 +103,7 @@ const SearchIndex = () => {
                 }
             }
         )();
-    }, [categories, variants, checkedHighestPrice, checkedLowestPrice, checkedNewestDate, checkedOldestDate])
+    }, [dispatch, categories, variants, checkedHighestPrice, checkedLowestPrice, checkedNewestDate, checkedOldestDate])
     // * Get All Variants and categories
     const [getVariants, setGetVariants] = useState([]);
     const [getCategories, setGetCategories] = useState([]);

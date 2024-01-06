@@ -5,9 +5,8 @@
 ? only works in the search page, and you need to change the previous search value
 */
 
-
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from 'src/redux/actions/setProductsAction';
 import axios from 'axios'
@@ -22,13 +21,12 @@ import Pagination from 'src/components/PaginationForSearch';
 
 const Search = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { searchTerm } = useParams();
     const products = useSelector(state => state.products.products);
 
 
     const [currentPage, setCurrentPage] = useState(0);
-    const [itemsPerPage, setItemsPerPage] = useState(2);
+    const [itemsPerPage] = useState(2);
     const [inputVisibleStart, setInputVisibleStart] = useState(false);
     const [inputVisibleEnd, setInputVisibleEnd] = useState(false);
     const [inputValueStart, setInputValueStart] = useState('');
@@ -229,6 +227,5 @@ const Search = () => {
 
 export default Search;
 
-//* Search reference
+//* Search reference & Filter reference
 //? https://www.phind.com/search?cache=mk8ampy9m9yq05uslj2fwhgi
-//* Filter reference
