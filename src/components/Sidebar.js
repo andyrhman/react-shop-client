@@ -1,18 +1,14 @@
 import React from 'react'
 
 const Sidebar = ({
-    checkedPrice,
+    checkedPriceAsc,
+    checkedPriceDesc,
     handlePriceChecked,
-    checkedPriceLow,
-    handlePriceCheckedLow,
     checkedDateNewest,
-    handleDateCheckedNewest,
     checkedDateOldest,
-    handleDateCheckedOldest,
-    getVariants,
+    handleDateChecked,
     getCategories,
     handleCategoryChange,
-    handleVariantChange
 }) => {
     return (
         <div className="mx-auto p-4 bg-white shadow md:h-full">
@@ -26,7 +22,8 @@ const Sidebar = ({
                         <input
                             type="checkbox"
                             className="checkbox checkbox-sm"
-                            checked={checkedPrice}
+                            value="asc"
+                            checked={checkedPriceAsc}
                             onChange={handlePriceChecked}
                         />
                         <span className='pl-2'>Highest</span>
@@ -35,8 +32,9 @@ const Sidebar = ({
                         <input
                             type="checkbox"
                             className="checkbox checkbox-sm"
-                            checked={checkedPriceLow}
-                            onChange={handlePriceCheckedLow}
+                            value="desc"
+                            checked={checkedPriceDesc}
+                            onChange={handlePriceChecked}
                         />
                         <span className='pl-2'>Lowest</span>
                     </div>
@@ -53,8 +51,9 @@ const Sidebar = ({
                         <input
                             type="checkbox"
                             className="checkbox checkbox-sm"
+                            value="newest"
                             checked={checkedDateNewest}
-                            onChange={handleDateCheckedNewest}
+                            onChange={handleDateChecked}
                         />
                         <span className='pl-2'>Newest</span>
                     </div>
@@ -62,8 +61,9 @@ const Sidebar = ({
                         <input
                             type="checkbox"
                             className="checkbox checkbox-sm"
+                            value="oldest"
                             checked={checkedDateOldest}
-                            onChange={handleDateCheckedOldest}
+                            onChange={handleDateChecked}
                         />
                         <span className='pl-2'>Oldest</span>
                     </div>
@@ -79,21 +79,6 @@ const Sidebar = ({
                         <div className='join' key={c.id}>
                             <input type="checkbox" className="checkbox checkbox-sm" value={c.name} onChange={handleCategoryChange} />
                             <span className='pl-2'>{c.name}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Variant */}
-            <div className="mb-4">
-                <article className="prose">
-                    <h4>Select Variant</h4>
-                </article>
-                <div className='grid grid-cols-3 justify-between md:flex md:flex-col'>
-                    {getVariants.map((v) => (
-                        <div className='join' key={v.id}>
-                            <input type="checkbox" className="checkbox checkbox-sm" value={v.name} onChange={handleVariantChange} />
-                            <span className='pl-2'>{v.name}</span>
                         </div>
                     ))}
                 </div>

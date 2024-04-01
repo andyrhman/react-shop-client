@@ -18,7 +18,7 @@ const SearchInput = ({searchTerm, handleSearch, onChangeSearch, products}) => {
                     placeholder="Search products..."
                     value={searchTerm}
                     onChange={onChangeSearch}
-                    onKeyUp={handleSearch}
+                    onKeyDown={handleSearch}
                 />
             </div>
             {products.length > 0 && (
