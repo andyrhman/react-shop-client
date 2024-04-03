@@ -11,7 +11,6 @@ import Wrapper from "src/components/Wrapper";
 import Footer from "src/components/Footer";
 import SEO from "src/components/SEO";
 import SearchProduct from "src/components/Cards/SearchProduct";
-import Sidebar from "src/components/Sidebar";
 import NotFound from "src/components/Cards/NotFound";
 import Pagination from "src/components/PaginationForSearch";
 import SearchAndFilter from "src/components/Forms/SearchAndFilter";
@@ -31,7 +30,7 @@ const Search = () => {
   };
 
   const pageTitle = `Search | ${process.env.REACT_APP_SITE_TITLE}`;
-  
+
   // * Category and Variant
   const [categories, setCategories] = useState([]);
 
@@ -40,7 +39,6 @@ const Search = () => {
   useEffect(() => {
     (async () => {
       try {
-
         const { data: categoryData } = await axios.get("categories");
         setGetCategories(categoryData);
       } catch (error) {
@@ -76,24 +74,24 @@ const Search = () => {
   const [checkedDateOldest, setCheckedDateOldest] = useState(false);
 
   useEffect(() => {
-    const searchTerm = searchParams.get('search');
+    const searchTerm = searchParams.get("search");
     const queryParams = new URLSearchParams();
 
     if (searchTerm) {
-      queryParams.append('search', searchTerm);
+      queryParams.append("search", searchTerm);
     }
     if (categories.length > 0) {
-      queryParams.append('filterByCategory', categories.join(','));
+      queryParams.append("filterByCategory", categories.join(","));
     }
     if (checkedPriceAsc) {
-      queryParams.append('sortByPrice', 'asc');
+      queryParams.append("sortByPrice", "asc");
     } else if (checkedPriceDesc) {
-      queryParams.append('sortByPrice', 'desc');
+      queryParams.append("sortByPrice", "desc");
     }
     if (checkedDateNewest) {
-      queryParams.append('sortByDate', 'newest');
+      queryParams.append("sortByDate", "newest");
     } else if (checkedDateOldest) {
-      queryParams.append('sortByDate', 'oldest');
+      queryParams.append("sortByDate", "oldest");
     }
 
     const searchParamsString = queryParams.toString();
@@ -102,8 +100,15 @@ const Search = () => {
     fetch(`http://localhost:8000/api/products?${searchParamsString}`)
       .then((response) => response.json())
       .then((data) => setProducts(data))
-      .catch((error) => console.error('Error fetching search results:', error));
-  }, [searchParams, categories, checkedPriceAsc, checkedPriceDesc, checkedDateNewest, checkedDateOldest]);
+      .catch((error) => console.error("Error fetching search results:", error));
+  }, [
+    searchParams,
+    categories,
+    checkedPriceAsc,
+    checkedPriceDesc,
+    checkedDateNewest,
+    checkedDateOldest,
+  ]);
 
   const handleCategoryChange = (e) => {
     const category = e.target.value;
@@ -117,99 +122,93 @@ const Search = () => {
   const handlePriceChecked = (e) => {
     const { checked, value } = e.target;
     const queryParams = new URLSearchParams(searchParams.toString());
-  
+
     // Remove any existing sortByPrice or sortByDate parameters
-    queryParams.delete('sortByPrice');
-    queryParams.delete('sortByDate');
-  
+    queryParams.delete("sortByPrice");
+    queryParams.delete("sortByDate");
+
     if (checked) {
-      queryParams.set('sortByPrice', value);
-      setCheckedPriceAsc(value === 'asc');
-      setCheckedPriceDesc(value === 'desc');
+      queryParams.set("sortByPrice", value);
+      setCheckedPriceAsc(value === "asc");
+      setCheckedPriceDesc(value === "desc");
     } else {
       setCheckedPriceAsc(false);
       setCheckedPriceDesc(false);
     }
-  
+
     setSearchParams(queryParams.toString(), { replace: true });
   };
-  
+
   const handleDateChecked = (e) => {
     const { checked, value } = e.target;
     const queryParams = new URLSearchParams(searchParams.toString());
-  
+
     // Remove any existing sortByPrice or sortByDate parameters
-    queryParams.delete('sortByPrice');
-    queryParams.delete('sortByDate');
-  
+    queryParams.delete("sortByPrice");
+    queryParams.delete("sortByDate");
+
     if (checked) {
-      queryParams.set('sortByDate', value);
-      setCheckedDateNewest(value === 'newest');
-      setCheckedDateOldest(value === 'oldest');
+      queryParams.set("sortByDate", value);
+      setCheckedDateNewest(value === "newest");
+      setCheckedDateOldest(value === "oldest");
     } else {
       setCheckedDateNewest(false);
       setCheckedDateOldest(false);
     }
-  
+
     setSearchParams(queryParams.toString(), { replace: true });
   };
-
 
   const currentItems = products.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
 
+  const resetFilters = () => {
+    setCheckedPriceAsc(false);
+    setCheckedPriceDesc(false);
+    setCheckedDateNewest(false);
+    setCheckedDateOldest(false);
+    setCategories([]);
+  };
   return (
     <Layout>
       <SEO title={pageTitle} />
       <Wrapper>
-        <SearchAndFilter />
+        <SearchAndFilter
+          checkedPriceAsc={checkedPriceAsc}
+          checkedPriceDesc={checkedPriceDesc}
+          handlePriceChecked={handlePriceChecked}
+          checkedDateNewest={checkedDateNewest}
+          checkedDateOldest={checkedDateOldest}
+          handleDateChecked={handleDateChecked}
+          getCategories={getCategories}
+          handleCategoryChange={handleCategoryChange}
+          resetFilters={resetFilters}
+        />
         {currentItems.length > 0 ? (
-              <>
-                <SearchProduct products={currentItems} />
-                <Pagination
-                  itemsPerPage={itemsPerPage}
-                  totalItems={products.length}
-                  paginate={handlePageChange}
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  start={start}
-                  end={end}
-                  setInputVisibleStart={setInputVisibleStart}
-                  setInputVisibleEnd={setInputVisibleEnd}
-                  inputVisibleStart={inputVisibleStart}
-                  inputVisibleEnd={inputVisibleEnd}
-                  inputValueStart={inputValueStart}
-                  inputValueEnd={inputValueEnd}
-                  setInputValueStart={setInputValueStart}
-                  setInputValueEnd={setInputValueEnd}
-                />
-              </>
-            ) : null}
-            <Footer />
-        <div className="flex flex-col md:flex-row justify-between">
-          {/* <button className="md:hidden" onClick={handleSidebarToggle}>
-            Filters
-          </button>
-          <div
-            className={`w-full md:w-64 mt-8 md:mt-0 ${
-              showSidebar ? "block" : "hidden"
-            } md:block md:fixed md:inset-y-0 md:left-0 md:overflow-auto md:h-screen`}
-          >
-            <Sidebar
-              checkedPriceAsc={checkedPriceAsc}
-              checkedPriceDesc={checkedPriceDesc}
-              handlePriceChecked={handlePriceChecked}
-              checkedDateNewest={checkedDateNewest}
-              checkedDateOldest={checkedDateOldest}
-              handleDateChecked={handleDateChecked}
-              getCategories={getCategories}
-              handleCategoryChange={handleCategoryChange}
+          <>
+            <SearchProduct products={currentItems} />
+            <Pagination
+              itemsPerPage={itemsPerPage}
+              totalItems={products.length}
+              paginate={handlePageChange}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              start={start}
+              end={end}
+              setInputVisibleStart={setInputVisibleStart}
+              setInputVisibleEnd={setInputVisibleEnd}
+              inputVisibleStart={inputVisibleStart}
+              inputVisibleEnd={inputVisibleEnd}
+              inputValueStart={inputValueStart}
+              inputValueEnd={inputValueEnd}
+              setInputValueStart={setInputValueStart}
+              setInputValueEnd={setInputValueEnd}
             />
-          </div> */}
-
-        </div>
+          </>
+        ) : <NotFound />}
+        <Footer />
       </Wrapper>
     </Layout>
   );
@@ -253,7 +252,6 @@ export default Search;
 //   };
 
 //   const pageTitle = `Search | ${process.env.REACT_APP_SITE_TITLE}`;
-  
 
 //   // * Price and Date
 //   const [checkedHighestPrice, setCheckedHighestPrice] = useState(false);
@@ -464,7 +462,6 @@ export default Search;
 
 // export default Search;
 
-
 // import React, { useState, useEffect } from 'react';
 // import { useParams } from 'react-router-dom';
 // import { useDispatch, useSelector } from 'react-redux';
@@ -483,7 +480,6 @@ export default Search;
 //     const dispatch = useDispatch();
 //     const { searchTerm } = useParams();
 //     const products = useSelector(state => state.products.products);
-
 
 //     const [currentPage, setCurrentPage] = useState(0);
 //     const [itemsPerPage] = useState(2);
@@ -559,7 +555,7 @@ export default Search;
 //             async () => {
 //                 try {
 //                     const { data: variantData } = await axios.get('variants');
-//                     // * Display unique product variant names (without repetition) 
+//                     // * Display unique product variant names (without repetition)
 //                     // ? https://www.phind.com/search?cache=mnr17wlwqumusah7cbhriotn
 //                     const uniqueVariants = variantData.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i);
 //                     setGetVariants(uniqueVariants);

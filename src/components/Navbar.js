@@ -31,7 +31,7 @@ const Navbar = ({ user }) => {
 
     const handleSearch = (e) => {
         if (e.key === 'Enter') {
-            router(`/cari?search=${searchTerm}`);
+            router(`/products?search=${searchTerm}`);
         }
     }
     
