@@ -7,7 +7,7 @@ import Navbar from './Navbar';
 import axios from "axios";
 
 const Wrapper = (props) => {
-    const { setUser, setProducts } = props;
+    const { setUser } = props;
     const perPage = 10;
     useEffect(() => {
         (
@@ -20,20 +20,10 @@ const Wrapper = (props) => {
                         console.log(error)
                     }
                 }
-                try {
-                    // ? https://www.phind.com/search?cache=g1op1bxyan4knygpnirea0ou
-                    const { data: productsData } = await axios.get('products');
-                    const lastPage = Math.ceil(productsData.length / perPage);
-                    setProducts(productsData.slice(0, perPage), lastPage);
-                } catch (error) {
-                    if (error.response && [401, 403, 404].includes(error.response.status)) {
-                        console.log(error)
-                    }
-                }
             }
         )()
 
-    }, [setUser, setProducts])
+    }, [setUser])
     return (
         <Layout>
             <Navbar />

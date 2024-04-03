@@ -15,7 +15,7 @@ const HomePage = () => {
       <Wrapper>
         <StoreHeading />
         <Card />
-        <ButtonForPaginate />
+        {/* <ButtonForPaginate /> */}
         <Footer />
       </Wrapper>
     </Layout>
