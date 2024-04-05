@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSearchParams } from 'react-router-dom';
 
 const SearchAndFilter = ({
   checkedPriceAsc,
@@ -8,24 +9,51 @@ const SearchAndFilter = ({
   checkedDateNewest,
   checkedDateOldest,
   handleDateChecked,
+  categories,
   getCategories,
   handleCategoryChange,
   resetFilters
 }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const router = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const searchParam = searchParams.get('search') || '';
+    setSearchTerm(searchParam);
+  }, [searchParams]);
 
   const handleSearch = (e) => {
-    if (e.key === "Enter") {
-      router(`/products?search=${searchTerm}`);
+    e.preventDefault();
+    const searchParams = new URLSearchParams();
+
+    if (searchTerm.trim()) {
+      searchParams.append("search", searchTerm);
     }
+    if (categories.length > 0) {
+      searchParams.append("filterByCategory", categories.join(","));
+    }
+    if (checkedPriceAsc) {
+      searchParams.append("sortByPrice", "asc");
+    } else if (checkedPriceDesc) {
+      searchParams.append("sortByPrice", "desc");
+    }
+    if (checkedDateNewest) {
+      searchParams.append("sortByDate", "newest");
+    } else if (checkedDateOldest) {
+      searchParams.append("sortByDate", "oldest");
+    }
+
+    navigate(`/products?${searchParams.toString()}`);
+    setSearchTerm("");
   };
+  
   return (
     <>
       <div className="m-10 w-screen max-w-screen-xl mx-auto">
         <div className="flex flex-col">
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
-            <form className="">
+            <form onSubmit={handleSearch}>
               <div className="relative mb-10 w-full flex  items-center justify-between rounded-md">
                 <svg
                   className="absolute left-2 block h-5 w-5 text-gray-400"
@@ -51,7 +79,7 @@ const SearchAndFilter = ({
                 <input
                   type="name"
                   name="search"
-                  onKeyDown={handleSearch}
+                  value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="h-12 w-full cursor-text rounded-md border border-gray-100 bg-gray-100 py-4 pr-40 pl-12 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                   placeholder="Search by name, description, etc"
@@ -194,7 +222,7 @@ const SearchAndFilter = ({
                 </button>
                 <button
                   className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-80 focus:ring"
-                  onClick={handleSearch}
+                  type="submit"
                 >
                   Search
                 </button>

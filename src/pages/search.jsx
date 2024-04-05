@@ -67,7 +67,8 @@ const Search = () => {
   const start = Math.max(0, currentPage - 2);
   const end = Math.min(start + 5, totalPages);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+
   const [checkedPriceAsc, setCheckedPriceAsc] = useState(false);
   const [checkedPriceDesc, setCheckedPriceDesc] = useState(false);
   const [checkedDateNewest, setCheckedDateNewest] = useState(false);
@@ -75,39 +76,31 @@ const Search = () => {
 
   useEffect(() => {
     const searchTerm = searchParams.get("search");
+    const category = searchParams.get("filterByCategory");
+    const sortByPrice = searchParams.get("sortByPrice");
+    const sortByDate = searchParams.get("sortByDate");
+
     const queryParams = new URLSearchParams();
 
     if (searchTerm) {
       queryParams.append("search", searchTerm);
     }
-    if (categories.length > 0) {
-      queryParams.append("filterByCategory", categories.join(","));
+    if (category) {
+      queryParams.append("filterByCategory", category);
     }
-    if (checkedPriceAsc) {
-      queryParams.append("sortByPrice", "asc");
-    } else if (checkedPriceDesc) {
-      queryParams.append("sortByPrice", "desc");
+    if (sortByPrice) {
+      queryParams.append("sortByPrice", sortByPrice);
     }
-    if (checkedDateNewest) {
-      queryParams.append("sortByDate", "newest");
-    } else if (checkedDateOldest) {
-      queryParams.append("sortByDate", "oldest");
+    if (sortByDate) {
+      queryParams.append("sortByDate", sortByDate);
     }
 
-    const searchParamsString = queryParams.toString();
-    setSearchParams(searchParamsString, { replace: true });
-
-    fetch(`http://localhost:8000/api/products?${searchParamsString}`)
+    fetch(`http://localhost:8000/api/products?${queryParams.toString()}`)
       .then((response) => response.json())
       .then((data) => setProducts(data))
       .catch((error) => console.error("Error fetching search results:", error));
   }, [
-    searchParams,
-    categories,
-    checkedPriceAsc,
-    checkedPriceDesc,
-    checkedDateNewest,
-    checkedDateOldest,
+    searchParams
   ]);
 
   const handleCategoryChange = (e) => {
@@ -135,8 +128,6 @@ const Search = () => {
       setCheckedPriceAsc(false);
       setCheckedPriceDesc(false);
     }
-
-    setSearchParams(queryParams.toString(), { replace: true });
   };
 
   const handleDateChecked = (e) => {
@@ -155,8 +146,6 @@ const Search = () => {
       setCheckedDateNewest(false);
       setCheckedDateOldest(false);
     }
-
-    setSearchParams(queryParams.toString(), { replace: true });
   };
 
   const currentItems = products.slice(
@@ -176,12 +165,14 @@ const Search = () => {
       <SEO title={pageTitle} />
       <Wrapper>
         <SearchAndFilter
+          searchParams={searchParams}
           checkedPriceAsc={checkedPriceAsc}
           checkedPriceDesc={checkedPriceDesc}
           handlePriceChecked={handlePriceChecked}
           checkedDateNewest={checkedDateNewest}
           checkedDateOldest={checkedDateOldest}
           handleDateChecked={handleDateChecked}
+          categories={categories}
           getCategories={getCategories}
           handleCategoryChange={handleCategoryChange}
           resetFilters={resetFilters}
